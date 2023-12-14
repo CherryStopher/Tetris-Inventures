@@ -12,6 +12,7 @@ class ScreenInfo:
         self.y_offset = 250
 
         self.next_blocks = []
+        # self.stored_block = None
 
         self.font = pygame.font.Font(None, 40)
 
@@ -45,7 +46,10 @@ class ScreenInfo:
     def set_next_blocks(self, next_blocks):
         self.next_blocks = next_blocks
 
-    def draw(self, screen, end, three_next_blocks):
+    # def set_stored_block(self, stored_block):
+    #     self.stored_block = stored_block
+
+    def draw(self, screen, end, three_next_blocks, stored_block):
         # End game
         if end:
             screen.blit(
@@ -54,6 +58,14 @@ class ScreenInfo:
                     SCREEN_WIDTH / 2 - self.game_over_text.get_width() / 2,
                     SCREEN_HEIGHT - 55,
                 ),
+            )
+
+        # Stored block
+        if stored_block:
+            stored_block.draw(
+                screen,
+                -(GRID_COLS * GRID_CELL_SIZE / 2 + self.x_offset + 90),
+                90,
             )
 
         # Next blocks

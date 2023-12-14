@@ -39,6 +39,12 @@ while True:
                     game.rotate_clockwise()
                 if event.key == pygame.K_z or event.key == pygame.K_LCTRL:
                     game.rotate_counter_clockwise()
+                if (
+                    event.key == pygame.K_c
+                    or event.key == pygame.K_LSHIFT
+                    or event.key == pygame.K_RSHIFT
+                ):
+                    game.store_block()
             if event.key == pygame.K_r and game.end:
                 game.reset()
 

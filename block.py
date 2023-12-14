@@ -35,6 +35,15 @@ class Block:
         self.row_offset += rows
         self.col_offset += cols
 
+    def restart_block(self):
+        self.rotation_state = 0
+        self.row_offset = 0
+        self.col_offset = 3
+        if self.id == 1:  # IBlock
+            self.move(-1, 0)
+        elif self.id == 4:  # OBlock
+            self.move(0, 1)
+
     def rotate_clockwise(self):
         self.rotation_state = (self.rotation_state + 1) % 4
 

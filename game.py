@@ -16,6 +16,9 @@ class Game:
         self.next_2nd_block = self.get_random_block()
         self.next_3rd_block = self.get_random_block()
 
+        self.stored_block = None
+        self.can_store = True
+
         self.screen_info = ScreenInfo()
         self.screen_info.set_next_blocks(self.get_three_next_blocks())
 
@@ -25,7 +28,7 @@ class Game:
         self.level = 1
 
         pygame.mixer.music.load("Tetris.mp3")
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.play(-1)
 
     def fill_bag(self):
         self.blocks = [
@@ -48,6 +51,26 @@ class Game:
         self.blocks.remove(block)
         return block
 
+    def store_block(self):
+        if self.can_store:
+            self.can_store = False
+            if self.stored_block == None:
+                temp_block = self.current_block
+                temp_block.restart_block()
+                self.stored_block = temp_block
+                self.current_block = self.next_1st_block
+                self.next_1st_block = self.next_2nd_block
+                self.next_2nd_block = self.next_3rd_block
+                self.next_3rd_block = self.get_random_block()
+                self.screen_info.set_next_blocks(self.get_three_next_blocks())
+
+            else:
+                temp_block = self.current_block
+                temp_block.restart_block()
+                self.current_block = self.stored_block
+                self.current_block.restart_block()
+                self.stored_block = temp_block
+
     def is_block_inside_grid(self):
         tiles = self.current_block.get_cell_positions()
         for tile in tiles:
@@ -69,6 +92,7 @@ class Game:
         lines_cleared = self.grid.clear_lines()
         self.update_lines(lines_cleared)
         self.update_score(lines_cleared, 0)
+        self.can_store = True
 
         if not self.is_block_inside_grid() or not self.block_fits():
             self.end = True
@@ -110,7 +134,9 @@ class Game:
     def draw(self, screen):
         self.grid.draw(screen)
         self.current_block.draw(screen)
-        self.screen_info.draw(screen, self.end, self.get_three_next_blocks())
+        self.screen_info.draw(
+            screen, self.end, self.get_three_next_blocks(), self.stored_block
+        )
 
     def reset(self):
         self.grid = Grid()
@@ -120,6 +146,8 @@ class Game:
         self.next_2nd_block = self.get_random_block()
         self.next_3rd_block = self.get_random_block()
         self.screen_info.set_next_blocks(self.get_three_next_blocks())
+
+        self.stored_block = None
 
         self.end = False
         self.score = 0
