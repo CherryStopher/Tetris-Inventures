@@ -121,6 +121,17 @@ class Game:
             self.current_block.move(-1, 0)
             self.lock_block()
 
+    def hard_drop(self):
+        rows = 0
+        while self.is_block_inside_grid() and self.block_fits():
+            self.current_block.move(1, 0)
+            rows += 1
+        self.current_block.move(-1, 0)
+        rows -= 1
+        self.lock_block()
+        self.update_score(0, 2 * rows)
+
+    # Rotation
     def rotate_clockwise(self):
         self.current_block.rotate_clockwise()
         if not self.is_block_inside_grid() or not self.block_fits():

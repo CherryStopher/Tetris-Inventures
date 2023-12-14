@@ -18,7 +18,7 @@ clock = pygame.time.Clock()
 
 game = Game()
 GAME_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(GAME_UPDATE, 200)
+pygame.time.set_timer(GAME_UPDATE, 500)
 
 while True:
     for event in pygame.event.get():
@@ -45,6 +45,8 @@ while True:
                     or event.key == pygame.K_RSHIFT
                 ):
                     game.store_block()
+                if event.key == pygame.K_SPACE:
+                    game.hard_drop()
             if event.key == pygame.K_r and game.end:
                 game.reset()
 
