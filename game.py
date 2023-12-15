@@ -33,6 +33,31 @@ class Game:
         pygame.mixer.music.load("Tetris.mp3")
         # pygame.mixer.music.play(-1)
 
+    def reset(self):
+        self.grid = Grid()
+        self.fill_bag()
+        self.current_block = self.get_random_block()
+        self.next_1st_block = self.get_random_block()
+        self.next_2nd_block = self.get_random_block()
+        self.next_3rd_block = self.get_random_block()
+        self.screen_info.set_next_blocks(self.get_three_next_blocks())
+
+        self.update_ghost_block()
+
+        self.stored_block = None
+
+        self.end = False
+        self.win = False
+        self.score = 0
+        self.lines = 0
+        self.level = 1
+
+        self.screen_info.set_score(self.score)
+        self.screen_info.set_lines(self.lines)
+        self.screen_info.set_level(self.level)
+
+        # pygame.mixer.music.play(-1)
+
     def fill_bag(self):
         self.blocks = [
             IBlock(),
@@ -70,9 +95,7 @@ class Game:
                 self.current_block = self.next_1st_block
 
                 if not self.block_fits():  # If it is at the spawn
-                    while self.is_block_inside_grid() and not self.block_fits():
-                        self.current_block.move(-1, 0)
-                        self.update_ghost_block()
+                    self.fix_ghost_block()
                     if not self.is_block_inside_grid() or not self.block_fits():
                         self.end = True
                 self.update_ghost_block()
@@ -83,13 +106,16 @@ class Game:
                 self.current_block.restart_block()
 
                 if not self.block_fits():  # If it is at the spawn
-                    while self.is_block_inside_grid() and not self.block_fits():
-                        self.current_block.move(-1, 0)
-                        self.update_ghost_block()
+                    self.fix_ghost_block()
                     if not self.is_block_inside_grid() or not self.block_fits():
                         self.end = True
                 self.update_ghost_block()
                 self.stored_block = temp_block
+
+    def fix_ghost_block(self):
+        while self.is_block_inside_grid() and not self.block_fits():
+            self.current_block.move(-1, 0)
+            self.update_ghost_block()
 
     def is_block_inside_grid(self):
         tiles = self.current_block.get_cell_positions()
@@ -200,29 +226,7 @@ class Game:
             self.current_block.rotate_clockwise()
         self.update_ghost_block()
 
-    def reset(self):
-        self.grid = Grid()
-        self.fill_bag()
-        self.current_block = self.get_random_block()
-        self.next_1st_block = self.get_random_block()
-        self.next_2nd_block = self.get_random_block()
-        self.next_3rd_block = self.get_random_block()
-        self.screen_info.set_next_blocks(self.get_three_next_blocks())
-
-        self.update_ghost_block()
-
-        self.stored_block = None
-
-        self.end = False
-        self.win = False
-        self.score = 0
-        self.lines = 0
-        self.level = 1
-
-        self.screen_info.set_score(self.score)
-        self.screen_info.set_lines(self.lines)
-        self.screen_info.set_level(self.level)
-
+    # Update screen info
     def update_score(self, lines_cleared, moved_down_cells):
         if lines_cleared == 1:
             self.score += 100
@@ -245,8 +249,11 @@ class Game:
     def level_up(self):
         self.level += 1
         self.lines = 0
+        self.stored_block = None
         self.grid.reset_grid()
+        self.update_ghost_block()
         self.screen_info.set_level(self.level)
+
         if self.level >= 10:
             self.win = True
 
