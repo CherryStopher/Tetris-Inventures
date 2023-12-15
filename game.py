@@ -54,9 +54,8 @@ class Game:
         return block
 
     def update_next_blocks(self):
-        self.current_block = self.next_1st_block
-        self.next_1st_block = self.get_random_block()
-        self.next_2nd_block = self.get_random_block()
+        self.next_1st_block = self.next_2nd_block
+        self.next_2nd_block = self.next_3rd_block
         self.next_3rd_block = self.get_random_block()
         self.screen_info.set_next_blocks(self.get_three_next_blocks())
 
@@ -67,11 +66,28 @@ class Game:
             temp_block.restart_block()
             if self.stored_block == None:
                 self.stored_block = temp_block
+                self.current_block = self.next_1st_block
+
+                if not self.block_fits():  # If it is at the spawn
+                    while self.is_block_inside_grid() and not self.block_fits():
+                        self.current_block.move(-1, 0)
+                        self.update_ghost_block()
+                    if not self.is_block_inside_grid() or not self.block_fits():
+                        self.end = True
+                self.update_ghost_block()
                 self.update_next_blocks()
 
             else:
                 self.current_block = self.stored_block
                 self.current_block.restart_block()
+
+                if not self.block_fits():  # If it is at the spawn
+                    while self.is_block_inside_grid() and not self.block_fits():
+                        self.current_block.move(-1, 0)
+                        self.update_ghost_block()
+                    if not self.is_block_inside_grid() or not self.block_fits():
+                        self.end = True
+                self.update_ghost_block()
                 self.stored_block = temp_block
 
     def is_block_inside_grid(self):
@@ -80,6 +96,16 @@ class Game:
             if not self.grid.is_valid_position(tile.row, tile.col):
                 return False
         return True
+
+    def is_block_inside_playable_grid(self):
+        tiles_inside = []
+        tiles = self.current_block.get_cell_positions()
+        for tile in tiles:
+            if not self.grid.is_valid_playable_position(tile.row, tile.col):
+                tiles_inside.append(False)
+            else:
+                tiles_inside.append(True)
+        return all(tiles_inside)  # if all tiles are inside the playable grid
 
     def is_ghost_block_inside_grid(self):
         tiles = self.current_block.get_ghost_cell_positions()
@@ -92,6 +118,7 @@ class Game:
         tiles = self.current_block.get_cell_positions()
         for tile in tiles:
             self.grid.grid[tile.row][tile.col] = self.current_block.id
+        self.current_block = self.next_1st_block
         self.update_next_blocks()
         self.update_ghost_block()
 
@@ -100,7 +127,13 @@ class Game:
         self.update_score(lines_cleared, 0)
         self.can_store = True
 
-        if not self.is_block_inside_grid() or not self.block_fits():
+        if not self.block_fits():  # If it is at the spawn
+            while self.is_block_inside_grid() and not self.block_fits():
+                self.current_block.move(-1, 0)
+                self.update_ghost_block()
+            if not self.is_block_inside_grid() or not self.block_fits():
+                self.end = True
+        if not self.grid.all_blocks_are_valid():
             self.end = True
 
     def block_fits(self):
@@ -166,13 +199,6 @@ class Game:
             self.current_block.rotate_clockwise()
         self.update_ghost_block()
 
-    def draw(self, screen):
-        self.grid.draw(screen)
-        self.current_block.draw(screen)
-        self.screen_info.draw(
-            screen, self.end, self.get_three_next_blocks(), self.stored_block
-        )
-
     def reset(self):
         self.grid = Grid()
         self.fill_bag()
@@ -210,3 +236,11 @@ class Game:
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
         self.screen_info.set_lines(self.lines)
+
+    def draw(self, screen):
+        self.grid.draw(screen)
+        self.current_block.draw(screen)
+        self.grid.draw_border(screen)
+        self.screen_info.draw(
+            screen, self.end, self.get_three_next_blocks(), self.stored_block
+        )

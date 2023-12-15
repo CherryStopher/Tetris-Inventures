@@ -56,7 +56,7 @@ class ScreenInfo:
                 self.game_over_text,
                 (
                     SCREEN_WIDTH / 2 - self.game_over_text.get_width() / 2,
-                    SCREEN_HEIGHT - 55,
+                    SCREEN_HEIGHT - 40,
                 ),
             )
 

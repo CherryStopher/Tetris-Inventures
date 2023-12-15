@@ -18,7 +18,7 @@ class Block:
         self.cell_size = 30
         self.rotation_state = 0
 
-        self.initial_row_offset = 0
+        self.initial_row_offset = 2
         self.initial_col_offset = 3
 
         self.row_offset = self.initial_row_offset
@@ -27,11 +27,11 @@ class Block:
         self.ghost_row_offset = self.initial_row_offset
         self.ghost_col_offset = self.initial_col_offset
 
-    def set_initial_offsets(self):
-        self.row_offset = self.initial_row_offset
-        self.col_offset = self.initial_col_offset
-        self.ghost_row_offset = self.initial_row_offset
-        self.ghost_col_offset = self.initial_col_offset
+    def set_initial_offsets(self, plus_row_offset=0, plus_col_offset=0):
+        self.row_offset = self.initial_row_offset + plus_row_offset
+        self.col_offset = self.initial_col_offset + plus_col_offset
+        self.ghost_row_offset = self.initial_row_offset + plus_row_offset
+        self.ghost_col_offset = self.initial_col_offset + plus_col_offset
 
     def get_cell_positions(self):
         tiles = self.cells[self.rotation_state]
@@ -70,9 +70,9 @@ class Block:
         self.ghost_row_offset += rows
         self.ghost_col_offset += cols
 
-    def restart_block(self):
+    def restart_block(self, plus_row_offset=0, plus_col_offset=0):
         self.rotation_state = 0
-        self.set_initial_offsets()
+        self.set_initial_offsets(plus_row_offset, plus_col_offset)
         if self.id == 1:  # IBlock
             self.move(-1, 0)
             self.move_ghost(-1, 0)
@@ -101,7 +101,7 @@ class Block:
                 self.cell_size - 1,
                 self.cell_size - 1,
             )
-            pygame.draw.rect(screen, (100, 0, 0), tile_rect, 0)
+            pygame.draw.rect(screen, self.color, tile_rect, 3)
 
         # Block
         tiles = self.get_cell_positions()
