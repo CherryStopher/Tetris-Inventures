@@ -49,7 +49,7 @@ class ScreenInfo:
     # def set_stored_block(self, stored_block):
     #     self.stored_block = stored_block
 
-    def draw(self, screen, end, three_next_blocks, stored_block):
+    def draw(self, screen, end, three_next_blocks, stored_block, win=False):
         # End game
         if end:
             screen.blit(

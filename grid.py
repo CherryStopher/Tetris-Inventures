@@ -13,6 +13,9 @@ class Grid:
         self.width = self.cols * self.cell_size
         self.height = self.rows * self.cell_size
 
+    def reset_grid(self):
+        self.grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
+
     def is_valid_position(self, row, col):
         return (0 <= row and row < self.rows) and (0 <= col and col < self.cols)
 
