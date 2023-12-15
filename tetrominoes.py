@@ -12,6 +12,7 @@ class IBlock(Block):
             3: [Position(0, 1), Position(1, 1), Position(2, 1), Position(3, 1)],
         }
         self.move(-1, 0)
+        self.move_ghost(-1, 0)
 
 
 class JBlock(Block):

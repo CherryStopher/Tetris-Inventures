@@ -16,6 +16,8 @@ class Game:
         self.next_2nd_block = self.get_random_block()
         self.next_3rd_block = self.get_random_block()
 
+        self.update_ghost_block()
+
         self.stored_block = None
         self.can_store = True
 
@@ -51,22 +53,23 @@ class Game:
         self.blocks.remove(block)
         return block
 
+    def update_next_blocks(self):
+        self.current_block = self.next_1st_block
+        self.next_1st_block = self.get_random_block()
+        self.next_2nd_block = self.get_random_block()
+        self.next_3rd_block = self.get_random_block()
+        self.screen_info.set_next_blocks(self.get_three_next_blocks())
+
     def store_block(self):
         if self.can_store:
             self.can_store = False
+            temp_block = self.current_block
+            temp_block.restart_block()
             if self.stored_block == None:
-                temp_block = self.current_block
-                temp_block.restart_block()
                 self.stored_block = temp_block
-                self.current_block = self.next_1st_block
-                self.next_1st_block = self.next_2nd_block
-                self.next_2nd_block = self.next_3rd_block
-                self.next_3rd_block = self.get_random_block()
-                self.screen_info.set_next_blocks(self.get_three_next_blocks())
+                self.update_next_blocks()
 
             else:
-                temp_block = self.current_block
-                temp_block.restart_block()
                 self.current_block = self.stored_block
                 self.current_block.restart_block()
                 self.stored_block = temp_block
@@ -78,16 +81,19 @@ class Game:
                 return False
         return True
 
+    def is_ghost_block_inside_grid(self):
+        tiles = self.current_block.get_ghost_cell_positions()
+        for tile in tiles:
+            if not self.grid.is_valid_position(tile.row, tile.col):
+                return False
+        return True
+
     def lock_block(self):
         tiles = self.current_block.get_cell_positions()
         for tile in tiles:
             self.grid.grid[tile.row][tile.col] = self.current_block.id
-
-        self.current_block = self.next_1st_block
-        self.next_1st_block = self.next_2nd_block
-        self.next_2nd_block = self.next_3rd_block
-        self.next_3rd_block = self.get_random_block()
-        self.screen_info.set_next_blocks(self.get_three_next_blocks())
+        self.update_next_blocks()
+        self.update_ghost_block()
 
         lines_cleared = self.grid.clear_lines()
         self.update_lines(lines_cleared)
@@ -104,16 +110,32 @@ class Game:
                 return False
         return True
 
+    def ghost_block_fits(self):
+        tiles = self.current_block.get_ghost_cell_positions()
+        for tile in tiles:
+            if not self.grid.is_empty_cell(tile.row, tile.col):
+                return False
+        return True
+
+    def update_ghost_block(self):
+        block_offsets = self.current_block.get_offsets()
+        self.current_block.set_ghost_offsets(block_offsets[0], block_offsets[1])
+        while self.is_ghost_block_inside_grid() and self.ghost_block_fits():
+            self.current_block.move_ghost(1, 0)
+        self.current_block.move_ghost(-1, 0)
+
     # Movement
     def move_left(self):
         self.current_block.move(0, -1)
         if not self.is_block_inside_grid() or not self.block_fits():
             self.current_block.move(0, 1)
+        self.update_ghost_block()
 
     def move_right(self):
         self.current_block.move(0, 1)
         if not self.is_block_inside_grid() or not self.block_fits():
             self.current_block.move(0, -1)
+        self.update_ghost_block()
 
     def move_down(self):
         self.current_block.move(1, 0)
@@ -136,11 +158,13 @@ class Game:
         self.current_block.rotate_clockwise()
         if not self.is_block_inside_grid() or not self.block_fits():
             self.current_block.rotate_counter_clockwise()
+        self.update_ghost_block()
 
     def rotate_counter_clockwise(self):
         self.current_block.rotate_counter_clockwise()
         if not self.is_block_inside_grid() or not self.block_fits():
             self.current_block.rotate_clockwise()
+        self.update_ghost_block()
 
     def draw(self, screen):
         self.grid.draw(screen)
@@ -157,6 +181,8 @@ class Game:
         self.next_2nd_block = self.get_random_block()
         self.next_3rd_block = self.get_random_block()
         self.screen_info.set_next_blocks(self.get_three_next_blocks())
+
+        self.update_ghost_block()
 
         self.stored_block = None
 
