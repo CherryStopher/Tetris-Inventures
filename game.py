@@ -241,19 +241,15 @@ class Game:
 
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
-        self.screen_info.set_lines(self.lines)
         if self.lines >= 3:
             self.level_up()
             self.screen_info.set_level(self.level)
+        self.screen_info.set_lines(self.lines)
 
     def level_up(self):
         self.level += 1
         self.lines = 0
-        self.stored_block = None
-        self.grid.reset_grid()
-        self.update_ghost_block()
         self.screen_info.set_level(self.level)
-
         if self.level >= 10:
             self.win = True
 
