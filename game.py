@@ -1,6 +1,7 @@
 from grid import Grid
 from screen_info import ScreenInfo
 from tetrominoes import *
+from timer import Timer
 import random
 import pygame
 
@@ -30,6 +31,11 @@ class Game:
         self.lines = 0
         self.level = 1
 
+        # 1000ms = 1s
+        self.speed = 1000 * ((0.8 - ((self.level - 1) * 0.007)) ** (self.level - 1))
+        self.timer = Timer(self.speed, repeat=True, func=self.move_down)
+        self.timer.activate()
+
         pygame.mixer.music.load("Tetris.mp3")
         # pygame.mixer.music.play(-1)
 
@@ -55,6 +61,10 @@ class Game:
         self.screen_info.set_score(self.score)
         self.screen_info.set_lines(self.lines)
         self.screen_info.set_level(self.level)
+
+        self.speed = 1000 * ((0.8 - ((self.level - 1) * 0.007)) ** (self.level - 1))
+        self.timer = Timer(self.speed, repeat=True, func=self.move_down)
+        self.timer.activate()
 
         # pygame.mixer.music.play(-1)
 
@@ -241,17 +251,29 @@ class Game:
 
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
-        if self.lines >= 3:
+        if self.lines >= 1:
             self.level_up()
             self.screen_info.set_level(self.level)
         self.screen_info.set_lines(self.lines)
 
     def level_up(self):
-        self.level += 1
         self.lines = 0
+        self.level += 1
+        self.speed = 1000 * ((0.8 - ((self.level - 1) * 0.007)) ** (self.level - 1))
+        self.timer.set_duration(self.speed)
         self.screen_info.set_level(self.level)
         if self.level >= 10:
             self.win = True
+
+    def get_level(self):
+        return self.level
+
+    def get_speed(self):
+        return self.speed
+
+    def update_natural_movement(self):
+        if not self.end:
+            self.timer.update()
 
     def draw(self, screen):
         self.grid.draw(screen)

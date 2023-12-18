@@ -26,7 +26,6 @@ class Grid:
         for row in range(self.rows):
             for col in range(self.cols):
                 if self.grid[row][col] != 0 and row < 2:
-                    print(row, col, self.grid[row][col])
                     return False
         return True
 

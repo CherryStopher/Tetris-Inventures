@@ -18,7 +18,9 @@ clock = pygame.time.Clock()
 
 game = Game()
 GAME_UPDATE = pygame.USEREVENT
+speed = game.get_speed()
 pygame.time.set_timer(GAME_UPDATE, 200)
+
 
 while True:
     for event in pygame.event.get():
@@ -50,8 +52,8 @@ while True:
             if event.key == pygame.K_r and game.end:
                 game.reset()
 
-        if event.type == GAME_UPDATE and not game.end:
-            game.move_down()
+    # Update falling blocks
+    game.update_natural_movement()
 
     # Draw
     screen.fill(MIDNIGHT_BLUE)
