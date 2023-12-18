@@ -38,6 +38,13 @@ class Grid:
                 lines_cleared += 1
         return lines_cleared
 
+    def grid_is_empty(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self.grid[row][col] != 0:
+                    return False
+        return True
+
     def draw(self, screen):
         # Grid
         for row in range(self.rows):

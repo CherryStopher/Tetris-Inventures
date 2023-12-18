@@ -20,6 +20,9 @@ class Timer:
         self.active = False
         self.start_time = 0
 
+    def set_speed(self, speed):
+        self.speed = speed
+
     def update(self):  # called every frame
         current_time = get_ticks()
         if self.active and current_time - self.start_time >= self.speed:

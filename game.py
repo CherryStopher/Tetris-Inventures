@@ -30,6 +30,7 @@ class Game:
         self.score = 0
         self.lines = 0
         self.level = 1
+        self.combo = -1
 
         # 1000ms = 1s
         self.speed = 1000 * ((0.8 - ((self.level - 1) * 0.007)) ** (self.level - 1))
@@ -57,6 +58,7 @@ class Game:
         self.score = 0
         self.lines = 0
         self.level = 1
+        self.combo = -1
 
         self.screen_info.set_score(self.score)
         self.screen_info.set_lines(self.lines)
@@ -69,14 +71,21 @@ class Game:
         # pygame.mixer.music.play(-1)
 
     def fill_bag(self):
+        # self.blocks = [
+        #     IBlock(),
+        #     JBlock(),
+        #     LBlock(),
+        #     OBlock(),
+        #     SBlock(),
+        #     ZBlock(),
+        #     TBlock(),
+        # ]
         self.blocks = [
             IBlock(),
-            JBlock(),
-            LBlock(),
-            OBlock(),
-            SBlock(),
-            ZBlock(),
-            TBlock(),
+            IBlock(),
+            IBlock(),
+            IBlock(),
+            IBlock(),
         ]
 
     def get_three_next_blocks(self):
@@ -157,13 +166,16 @@ class Game:
             self.grid.grid[tile.row][tile.col] = self.current_block.id
         self.current_block = self.next_1st_block
         self.update_next_blocks()
-        self.update_ghost_block()
 
         lines_cleared = self.grid.clear_lines()
-        self.update_lines(lines_cleared)
+        if lines_cleared == 0:
+            self.combo = -1
         self.update_score(lines_cleared, 0)
+        self.update_lines(lines_cleared)
+        self.update_ghost_block()
         self.can_store = True
 
+        # spawn block
         if not self.block_fits():  # If it is at the spawn
             while self.is_block_inside_grid() and not self.block_fits():
                 self.current_block.move(-1, 0)
@@ -237,21 +249,29 @@ class Game:
         self.update_ghost_block()
 
     # Update screen info
-    def update_score(self, lines_cleared, moved_down_cells):
-        if lines_cleared == 1:
-            self.score += 100
-        elif lines_cleared == 2:
-            self.score += 300
-        elif lines_cleared == 3:
-            self.score += 500
-        elif lines_cleared == 4:
-            self.score += 800
+    def update_score(self, lines_cleared=None, moved_down_cells=0):
+        lines_score = {1: 100, 2: 300, 3: 500, 4: 800}
+        perfect_clear_line_score = {1: 800, 2: 1200, 3: 1600, 4: 2000}
+        grid_is_empty = self.grid.grid_is_empty()
+
+        # soft drop
         self.score += moved_down_cells
+
+        # complete rows
+        if lines_cleared:
+            if grid_is_empty:
+                self.score += perfect_clear_line_score[lines_cleared] * self.level
+            else:
+                self.combo += 1
+                if self.combo > -1:
+                    self.score += 50 * self.combo * self.level
+                self.score += lines_score[lines_cleared] * self.level
+
         self.screen_info.set_score(self.score)
 
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
-        if self.lines >= 1:
+        if self.lines >= 10:
             self.level_up()
             self.screen_info.set_level(self.level)
         self.screen_info.set_lines(self.lines)
@@ -260,7 +280,7 @@ class Game:
         self.lines = 0
         self.level += 1
         self.speed = 1000 * ((0.8 - ((self.level - 1) * 0.007)) ** (self.level - 1))
-        self.timer.set_duration(self.speed)
+        self.timer.set_speed(self.speed)
         self.screen_info.set_level(self.level)
         if self.level >= 10:
             self.win = True
