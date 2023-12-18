@@ -27,6 +27,7 @@ class Game:
 
         self.end = False
         self.win = False
+        self.all_scores = []
         self.score = 0
         self.lines = 0
         self.level = 1
@@ -37,8 +38,13 @@ class Game:
         self.timer = Timer(self.speed, repeat=True, func=self.move_down)
         self.timer.activate()
 
-        pygame.mixer.music.load("Tetris.mp3")
-        # pygame.mixer.music.play(-1)
+        # music and sounds
+        pygame.mixer.music.load("assets/sounds/tetris.mp3")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play(-1)
+
+        self.lock_block_sound = pygame.mixer.Sound("assets/sounds/lock_block.wav")
+        self.lock_block_sound.set_volume(0.03)
 
     def reset(self):
         self.grid = Grid()
@@ -68,24 +74,17 @@ class Game:
         self.timer = Timer(self.speed, repeat=True, func=self.move_down)
         self.timer.activate()
 
-        # pygame.mixer.music.play(-1)
+        pygame.mixer.music.play(-1)
 
     def fill_bag(self):
-        # self.blocks = [
-        #     IBlock(),
-        #     JBlock(),
-        #     LBlock(),
-        #     OBlock(),
-        #     SBlock(),
-        #     ZBlock(),
-        #     TBlock(),
-        # ]
         self.blocks = [
             IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
+            JBlock(),
+            LBlock(),
+            OBlock(),
+            SBlock(),
+            ZBlock(),
+            TBlock(),
         ]
 
     def get_three_next_blocks(self):
@@ -116,7 +115,7 @@ class Game:
                 if not self.block_fits():  # If it is at the spawn
                     self.fix_ghost_block()
                     if not self.is_block_inside_grid() or not self.block_fits():
-                        self.end = True
+                        self.game_over()
                 self.update_ghost_block()
                 self.update_next_blocks()
 
@@ -127,7 +126,7 @@ class Game:
                 if not self.block_fits():  # If it is at the spawn
                     self.fix_ghost_block()
                     if not self.is_block_inside_grid() or not self.block_fits():
-                        self.end = True
+                        self.game_over()
                 self.update_ghost_block()
                 self.stored_block = temp_block
 
@@ -174,6 +173,7 @@ class Game:
         self.update_lines(lines_cleared)
         self.update_ghost_block()
         self.can_store = True
+        self.lock_block_sound.play()
 
         # spawn block
         if not self.block_fits():  # If it is at the spawn
@@ -181,9 +181,9 @@ class Game:
                 self.current_block.move(-1, 0)
                 self.update_ghost_block()
             if not self.is_block_inside_grid() or not self.block_fits():
-                self.end = True
+                self.game_over()
         if not self.grid.all_blocks_are_valid():
-            self.end = True
+            self.game_over()
 
     def block_fits(self):
         tiles = self.current_block.get_cell_positions()
@@ -294,6 +294,12 @@ class Game:
     def update_natural_movement(self):
         if not self.end:
             self.timer.update()
+
+    def game_over(self):
+        self.end = True
+        self.all_scores.append(self.score)
+        self.all_scores.sort(reverse=True)
+        pygame.mixer.music.stop()
 
     def draw(self, screen):
         self.grid.draw(screen)

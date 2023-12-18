@@ -2,6 +2,7 @@ import pygame, sys
 from game import Game
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, MIDNIGHT_BLUE, WHITE, LIGHT_BLUE
 
+
 pygame.init()
 
 # Font
@@ -13,6 +14,7 @@ score_rect = pygame.Rect(SCREEN_WIDTH - 200, 100, 170, 60)
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tetris")
+
 
 clock = pygame.time.Clock()
 
@@ -51,6 +53,8 @@ while True:
                     game.hard_drop()
             if event.key == pygame.K_r and game.end:
                 game.reset()
+        if game.end:
+            game.game_over()
 
     # Update falling blocks
     game.update_natural_movement()
