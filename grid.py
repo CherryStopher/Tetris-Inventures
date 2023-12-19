@@ -1,6 +1,5 @@
 import pygame
-from consts import COLORS, MIDNIGHT_BLUE, WHITE
-from consts import SCREEN_WIDTH, SCREEN_HEIGHT, GRID_ROWS, GRID_COLS, GRID_CELL_SIZE
+from settings import *
 
 
 class Grid:
@@ -46,6 +45,15 @@ class Grid:
         return True
 
     def draw(self, screen):
+        # Grid background
+        grid_rect = pygame.Rect(
+            SCREEN_WIDTH / 2 - self.width / 2 - 1,
+            SCREEN_HEIGHT / 2 - self.height / 2,
+            self.width + 1,
+            self.height,
+        )
+        pygame.draw.rect(screen, BLACK, grid_rect, 0)
+
         # Grid
         for row in range(self.rows):
             for col in range(self.cols):
@@ -60,11 +68,9 @@ class Grid:
 
     def draw_border(self, screen):
         # Top border
-        rect_width = self.width
+        rect_width = self.width + 10
         rect_height = self.cell_size * 4 - 12
-        rect_top = SCREEN_HEIGHT / 2 - self.height / 2
-        center_rect_size = min(self.width, self.height) // 2
         center_rect = pygame.Rect(
             SCREEN_WIDTH / 2 - rect_width / 2, 0, rect_width, rect_height
         )
-        pygame.draw.rect(screen, MIDNIGHT_BLUE, center_rect)
+        pygame.draw.rect(screen, DENIM_BLUE, center_rect)

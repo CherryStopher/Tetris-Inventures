@@ -27,7 +27,7 @@ class Game:
 
         self.end = False
         self.win = False
-        self.all_scores = []
+        self.all_scores = [0]
         self.score = 0
         self.lines = 0
         self.level = 1
@@ -91,6 +91,8 @@ class Game:
         self.combo = -1
 
         self.screen_info.set_score(self.score)
+        self.screen_info.set_high_score(self.all_scores[0])
+        self.screen_info.set_combo(self.combo)
         self.screen_info.set_lines(self.lines)
         self.screen_info.set_level(self.level)
 
@@ -101,22 +103,22 @@ class Game:
         pygame.mixer.music.play(-1)
 
     def fill_bag(self):
-        # self.blocks = [
-        #     IBlock(),
-        #     JBlock(),
-        #     LBlock(),
-        #     OBlock(),
-        #     SBlock(),
-        #     ZBlock(),
-        #     TBlock(),
-        # ]
         self.blocks = [
             IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
+            JBlock(),
+            LBlock(),
+            OBlock(),
+            SBlock(),
+            ZBlock(),
+            TBlock(),
         ]
+        # self.blocks = [
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        # ]
 
     def get_three_next_blocks(self):
         return [self.next_1st_block, self.next_2nd_block, self.next_3rd_block]
@@ -202,6 +204,7 @@ class Game:
         lines_cleared = self.grid.clear_lines()
         if lines_cleared == 0:
             self.combo = -1
+            self.screen_info.set_combo(self.combo)
         self.update_score(lines_cleared, 0)
         self.update_lines(lines_cleared)
         self.update_ghost_block()
@@ -309,10 +312,13 @@ class Game:
         # complete rows
         if lines_cleared:
             if grid_is_empty:
+                self.combo += 1
+                self.screen_info.set_combo(self.combo)
                 self.score += perfect_clear_line_score[lines_cleared] * self.level
                 self.all_clear_sound.play()
             else:
                 self.combo += 1
+                self.screen_info.set_combo(self.combo)
                 if self.combo > -1:
                     self.score += 50 * self.combo * self.level
                 self.score += lines_score[lines_cleared] * self.level
@@ -352,6 +358,7 @@ class Game:
         self.all_scores.append(self.score)
         self.all_scores.sort(reverse=True)
         pygame.mixer.music.stop()
+        self.screen_info.set_high_score(self.all_scores[0])
 
     def draw(self, screen):
         self.grid.draw(screen)

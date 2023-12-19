@@ -1,6 +1,6 @@
 import pygame, sys
 from game import Game
-from consts import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, MIDNIGHT_BLUE, WHITE, LIGHT_BLUE
+from settings import *
 
 
 pygame.init()
@@ -53,14 +53,13 @@ while True:
                     game.hard_drop()
             if event.key == pygame.K_r and game.end:
                 game.reset()
-        if game.end:
-            game.game_over()
 
     # Update falling blocks
-    game.update_natural_movement()
+    if not game.end:
+        game.update_natural_movement()
 
     # Draw
-    screen.fill(MIDNIGHT_BLUE)
+    screen.fill(DENIM_BLUE)
 
     game.draw(screen)
 

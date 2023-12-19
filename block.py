@@ -1,12 +1,5 @@
 import pygame
-from consts import (
-    COLORS,
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-    GRID_ROWS,
-    GRID_COLS,
-    GRID_CELL_SIZE,
-)
+from settings import *
 from position import Position
 
 
@@ -101,7 +94,7 @@ class Block:
                 self.cell_size - 1,
                 self.cell_size - 1,
             )
-            pygame.draw.rect(screen, self.color, tile_rect, 3)
+            pygame.draw.rect(screen, self.color, tile_rect, 4)
 
         # Block
         tiles = self.get_cell_positions()
