@@ -1,6 +1,6 @@
 import pygame
-from settings import *
-from position import Position
+from .settings import *
+from .position import Position
 
 
 class Block:

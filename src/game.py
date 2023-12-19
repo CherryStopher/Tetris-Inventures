@@ -1,7 +1,7 @@
-from grid import Grid
-from screen_info import ScreenInfo
-from tetrominoes import *
-from timer import Timer
+from .grid import Grid
+from .screen_info import ScreenInfo
+from .tetrominoes import *
+from .timer import Timer
 import random
 import pygame
 
@@ -101,22 +101,22 @@ class Game:
         pygame.mixer.music.play(-1)
 
     def fill_bag(self):
-        # self.blocks = [
-        #     IBlock(),
-        #     JBlock(),
-        #     LBlock(),
-        #     OBlock(),
-        #     SBlock(),
-        #     ZBlock(),
-        #     TBlock(),
-        # ]
         self.blocks = [
             IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
-            IBlock(),
+            JBlock(),
+            LBlock(),
+            OBlock(),
+            SBlock(),
+            ZBlock(),
+            TBlock(),
         ]
+        # self.blocks = [
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        #     IBlock(),
+        # ]
 
     def get_three_next_blocks(self):
         return [self.next_1st_block, self.next_2nd_block, self.next_3rd_block]
@@ -326,7 +326,7 @@ class Game:
 
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
-        if self.lines >= 1:
+        if self.lines >= 10:
             self.level_up()
             self.screen_info.set_level(self.level)
         self.screen_info.set_lines(self.lines)
