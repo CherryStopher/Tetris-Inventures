@@ -43,11 +43,11 @@ deactivate
 
 - Flecha izquierda: Mover pieza a la izquierda
 - Flecha derecha: Mover pieza a la derecha
-- Flecha abajo: soft drop
-- Espacio: hard drop
-- Flecha arriba: rotar pieza en sentido horario
-- Z o LCRTL: rotar pieza en sentido antihorario
-- C o LShift o RShift: guardar pieza
+- Flecha abajo: Soft drop
+- Espacio: Hard drop
+- Flecha arriba: Rotar pieza en sentido horario
+- Z o LCRTL: Rotar pieza en sentido antihorario
+- C o LShift o RShift: Guardar pieza
 
 ## Funcionalidades
 

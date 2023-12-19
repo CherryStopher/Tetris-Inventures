@@ -66,8 +66,6 @@ class Game:
         self.store_sound.set_volume(0.05)
         self.level_up_sound = pygame.mixer.Sound("assets/sounds/level_up.mp3")
         self.level_up_sound.set_volume(0.05)
-        # self.game_over_sound = pygame.mixer.Sound("assets/sounds/game_over.mp3")
-        # self.game_over_sound.set_volume(0.05)
 
     def reset(self):
         self.grid = Grid()
@@ -110,13 +108,6 @@ class Game:
             ZBlock(),
             TBlock(),
         ]
-        # self.blocks = [
-        #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
-        # ]
 
     def get_three_next_blocks(self):
         return [self.next_1st_block, self.next_2nd_block, self.next_3rd_block]
