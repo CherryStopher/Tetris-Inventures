@@ -26,7 +26,6 @@ class Game:
         self.screen_info.set_next_blocks(self.get_three_next_blocks())
 
         self.end = False
-        self.win = False
         self.all_scores = [0]
         self.score = 0
         self.lines = 0
@@ -84,7 +83,6 @@ class Game:
         self.stored_block = None
 
         self.end = False
-        self.win = False
         self.score = 0
         self.lines = 0
         self.level = 1
@@ -103,22 +101,22 @@ class Game:
         pygame.mixer.music.play(-1)
 
     def fill_bag(self):
-        self.blocks = [
-            IBlock(),
-            JBlock(),
-            LBlock(),
-            OBlock(),
-            SBlock(),
-            ZBlock(),
-            TBlock(),
-        ]
         # self.blocks = [
         #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
-        #     IBlock(),
+        #     JBlock(),
+        #     LBlock(),
+        #     OBlock(),
+        #     SBlock(),
+        #     ZBlock(),
+        #     TBlock(),
         # ]
+        self.blocks = [
+            IBlock(),
+            IBlock(),
+            IBlock(),
+            IBlock(),
+            IBlock(),
+        ]
 
     def get_three_next_blocks(self):
         return [self.next_1st_block, self.next_2nd_block, self.next_3rd_block]
@@ -328,7 +326,7 @@ class Game:
 
     def update_lines(self, lines_cleared):
         self.lines += lines_cleared
-        if self.lines >= 10:
+        if self.lines >= 1:
             self.level_up()
             self.screen_info.set_level(self.level)
         self.screen_info.set_lines(self.lines)
@@ -340,8 +338,6 @@ class Game:
         self.timer.set_speed(self.speed)
         self.screen_info.set_level(self.level)
         self.level_up_sound.play()
-        if self.level >= 10:
-            self.win = True
 
     def get_level(self):
         return self.level
@@ -365,5 +361,5 @@ class Game:
         self.current_block.draw(screen)
         self.grid.draw_border(screen)
         self.screen_info.draw(
-            screen, self.end, self.get_three_next_blocks(), self.stored_block, self.win
+            screen, self.end, self.get_three_next_blocks(), self.stored_block
         )

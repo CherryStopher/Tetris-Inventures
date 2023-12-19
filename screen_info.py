@@ -69,6 +69,7 @@ class ScreenInfo:
         self.high_score_number_text = self.font.render(f"{self.score}", True, WHITE)
 
         self.game_over_text = self.font.render("GAME OVER", True, WHITE)
+        self.restart_text = self.font.render("Press R to restart", True, WHITE)
 
     def set_score(self, score):
         self.score = score
@@ -101,7 +102,7 @@ class ScreenInfo:
         text_rect.center = (x, y)
         screen.blit(text_surface, text_rect)
 
-    def draw(self, screen, end, three_next_blocks, stored_block, win=False):
+    def draw(self, screen, end, three_next_blocks, stored_block):
         # Info rect
         pygame.draw.rect(screen, MIDNIGHT_BLUE, self.info_rect, 0)
         pygame.draw.rect(screen, MIDNIGHT_BLUE, self.next_blocks_rect, 0)
@@ -115,7 +116,14 @@ class ScreenInfo:
                 self.game_over_text,
                 (
                     SCREEN_WIDTH / 2 - self.game_over_text.get_width() / 2,
-                    SCREEN_HEIGHT - 40,
+                    20,
+                ),
+            )
+            screen.blit(
+                self.restart_text,
+                (
+                    SCREEN_WIDTH / 2 - self.restart_text.get_width() / 2,
+                    60,
                 ),
             )
 
